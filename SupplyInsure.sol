@@ -24,10 +24,10 @@ contract SupplyInsure {
         value = _value
     }
 
-    function confirmTransaction(address _oracle, uint value) //sender must also confirm address of oracle 
+    function confirmTransaction(address _oracle, uint _value) //sender must also confirm address of oracle 
     isSender()
     {
-        if (oracle == _oracle) {
+        if (oracle == _oracle && value == _value) {
             confirmed = true;
         }
     }
