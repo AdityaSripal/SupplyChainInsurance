@@ -1,19 +1,16 @@
 pragma solidity ^0.4.13;
+import "./OracleInterface.sol";
+import "./SupplierOracle.sol";
 
-interface Oracle {
-    function subscribe(string trackingNum, address receiver, address sender, uint reward) returns (bool);
-    function confirm() returns (bool);
-    function unsubscribe(string trackingNumber) returns (bool);
-}
-
-contract SupplyInsure {
+contract SupplyInsure is Insurance {
     address receiver;
     address sender;
+    address oracleAddress;
     Oracle oracle;
     uint value;
     uint reward;
 
-    string trackingNumber;
+    bytes32[] params;
 
     bool delivered;
     bool delayed;
@@ -22,17 +19,20 @@ contract SupplyInsure {
     bool oracleConfirmed;
 
     modifier isSender() {if(msg.sender == sender) {_;}}
-    modifier validOracle() {if(msg.sender == oracle && oracleConfirmed) {_;}}
+    modifier validOracle() {if(msg.sender == oracleAddress && oracleConfirmed) {_;}}
 
-    function SupplyInsure(string _trackingNumber, address _sender, address _oracle, uint _value, uint _reward) payable {
+    function SupplyInsure(bytes32[] _params, address _sender, address _oracle, uint _value, uint _reward) payable {
         require(msg.value >= _value + _reward);
-        trackingNumber = _trackingNumber;
         receiver = msg.sender;
         sender = _sender;
+        oracleAddress = oracle;
         oracle = Oracle(_oracle);
         value = _value;
         reward = _reward;
-        oracleSubscribed = oracle.subscribe(trackingNumber, receiver, sender, reward); // returns true on success
+        params = _params;
+        if (!oracle.subscribe(params, receiver, sender, reward)) {
+            revert();
+        }     // returns true on success
     }
 
     function confirmTransaction(address _oracle, uint _value) //sender must also confirm address of oracle as well as the value of product
@@ -44,12 +44,11 @@ contract SupplyInsure {
             revert();
         }
         oracleConfirmed = oracle.confirm();
-
     }
 
     function cancelTransaction() {
         require(msg.sender == receiver && !senderConfirmed);
-        oracle.unsubscribe(trackingNumber);
+        oracle.unsubscribe(params);
         selfdestruct(receiver);
     }
 
