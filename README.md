@@ -7,7 +7,7 @@ This repo houses a simple example of both types.
 The client contract understands the oracle interface and can take in as an argument the address of any smart contract that implements this interface.
 It also takes in a bytes32 params which will be handed to the oracle to parse and interpret as it needs. This allows for flexibility as one client smart contract can work for multiple different types of oracles.
 
-# SupplyInsure
+## SupplyInsure
 function SupplyInsure(bytes32 _params, address _sender, address _oracle, uint _value, uint _reward):
 _params: any information the oracle might need to function
 _sender: address of the sender
@@ -21,7 +21,7 @@ withdraw(): Withdraw can be called by receiver to withdraw their funds if the in
 
 deliver() and refund(): Can only be called by the oracle. This determines who gets paid.
 
-# SupplierOracle
+## SupplierOracle
 The Oracle contract will be deployed by an oracle which is also running a server that talks to a logistics API. It can subscribe to multiple clients and call their deliver and refund methods once it has enough information to determine what should happen.
 
 function subscribe(bytes32 params, address insurance):
@@ -34,7 +34,7 @@ delivered(address insurance) and refunded(address insurance): Once the oracle su
 
 The way the Oracle would accomplish this is by running a geth node on the server. When the server wants to call a method on its Oracle contract it will make a bash shell call to call that method in its contract through its own geth node.
 
-# Future Work:
+## Future Work:
 Allow insurance contracts to employ multiple oracles and have them vote on given outcome, thus reducing trust. This also opens the door for more complex insurance structures (i.e. Delivery time oracle from delivery company, temperature oracle from IOT device, both of which can be involved in the insurance terms).
 Rather than having oracle decide on payment, have oracle simply send data to contract and then have the smart contract make the appropriate action. This would make payment process more transparent and trustless.
 Allow insurance contracts to have more granular, precise outcomes than just delivered or refunded.
