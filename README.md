@@ -9,11 +9,17 @@ It also takes in a bytes32 params which will be handed to the oracle to parse an
 
 ## SupplyInsure
 function SupplyInsure(bytes32 _params, address _sender, address _oracle, uint _value, uint _reward):
+
 _params: any information the oracle might need to function
+
 _sender: address of the sender
+
 _oracle: address of oracle
+
 _value: value to be paid to sender
+
 _reward: reward to be paid to oracle regardless of outcome
+
 
 The confirm methods can only be called by sender and oracle respectively.
 
@@ -25,7 +31,9 @@ deliver() and refund(): Can only be called by the oracle. This determines who ge
 The Oracle contract will be deployed by an oracle which is also running a server that talks to a logistics API. It can subscribe to multiple clients and call their deliver and refund methods once it has enough information to determine what should happen.
 
 function subscribe(bytes32 params, address insurance):
+
 params: The Oracle is responsible for parsing this for any params it needs to function. If it is not in the format it expects, the oracle reverts any changes and raises exception.
+
 insurance: This is the address of the client
 
 function unsubscribe(bytes32 params): This causes the oracle to unsubscribe from a client's insurance contract. It can use params as it needs to accomplish this.
