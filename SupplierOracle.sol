@@ -23,6 +23,7 @@ contract SupplierOracle {
 
     function subscribe(bytes32 params, address insurance) returns (bool) {
         clients[insurance] = Client(params, SupplyInsure(insurance), false);
+        insurance.confirm();
         return true;
     }
 
