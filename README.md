@@ -44,5 +44,7 @@ The way the Oracle would accomplish this is by running a geth node on the server
 
 ## Future Work:
 Allow insurance contracts to employ multiple oracles and have them vote on given outcome, thus reducing trust. This also opens the door for more complex insurance structures (i.e. Delivery time oracle from delivery company, temperature oracle from IOT device, both of which can be involved in the insurance terms).
+
 Rather than having oracle decide on payment, have oracle simply send data to contract and then have the smart contract make the appropriate action. This would make payment process more transparent and trustless.
+
 Allow insurance contracts to have more granular, precise outcomes than just delivered or refunded.
