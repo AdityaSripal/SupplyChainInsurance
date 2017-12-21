@@ -1,48 +1,52 @@
 pragma solidity^0.4.13;
 
-contract SupplyInsure {
+contract Insurance {
     function deliver();
     function refund();
 }
 
-contract Oracle {
-    function subscribe(bytes32 params, address receiver, address sender, uint reward) returns (bool);
-    function confirm() returns (bool);
-    function unsubscribe(bytes32 params) returns (bool);
-    function() payable;
-}
-
 contract SupplierOracle {
-    struct Client {
-        bytes32 params;
-        SupplyInsure terms;
-        bool confirmed;
-    }
+    mapping(address => bool) public clients;
+    
+    modifier confirmed(address insurance) {if(clients[insurance]) {_;}} 
 
-    mapping(address => Client) clients;
+    event Subscribed(address insurance);
+    event Unsubscribed(address insurance);
+    event Voted(address insurance);
 
     function subscribe(bytes32 params, address insurance) returns (bool) {
-        clients[insurance] = Client(params, SupplyInsure(insurance), false);
-        insurance.confirm();
+        clients[insurance] = true;
+        SupplyInsure s  = SupplyInsure(insurance);
+        s.oracleConfirm();
+        Subscribed(insurance);
         return true;
     }
 
-    function unsubscribe(bytes32 params) returns (bool) {
-        delete clients[msg.sender]; //not sure how to remove key-val pair?
+    function unsubscribe(address insurance) returns (bool) {
+        delete clients[msg.sender];
+        Unsubscribed(insurance);
         return true;
     }
 
     function confirm() returns (bool) {
-        clients[msg.sender].confirmed = true;
+        clients[msg.sender] = true;
         return true;
     }
 
-    function delivered(address insurance) {
-        clients[insurance].terms.deliver();
+    function delivered(address insurance) 
+    confirmed(insurance)
+    {
+        SupplyInsure s  = SupplyInsure(insurance);
+        Voted(insurance);
+        s.deliver();
     }
 
-    function refunded(address insurance) {
-        clients[insurance].terms.refund();
+    function refunded(address insurance)
+    confirmed(insurance)
+    {
+        SupplyInsure s  = SupplyInsure(insurance);
+        Voted(insurance);
+        s.refund();
     }
     
     function() payable {
